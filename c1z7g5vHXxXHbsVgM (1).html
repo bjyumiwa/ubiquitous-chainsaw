@@ -1,0 +1,239 @@
+<html><head><base href="https://websim.creation.engine/" />
+<meta charset="UTF-8">
+<title>ARTWISE - 美術の質問BOX</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap');
+
+body {
+    font-family: 'Quicksand', sans-serif;
+    background: linear-gradient(135deg, #FFD1DC, #FFC0CB, #FFB6C1);
+    color: #333;
+    line-height: 1.6;
+    padding: 20px;
+    min-height: 100vh;
+}
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+h1 {
+    color: #FF69B4;
+    text-align: center;
+    font-size: 3.5em;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+}
+.button-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+.category-btn {
+    padding: 15px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 1em;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    width: calc(50% - 10px);
+    max-width: 250px;
+}
+.category-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+}
+.btn-1 { background-color: #fac3d0; }
+.btn-2 { background-color: #bbfdbb; }
+.btn-3 { background-color: #bcbcfa; }
+.btn-4 { background-color: #fdfdbd; }
+.btn-5 { background-color: #f5bb92; }
+.btn-6 { background-color: #d6bafc; }
+.btn-7 { background-color: #c2fddb; }
+.btn-8 { background-color: #f6fabe; }
+
+#questionInput {
+    width: calc(100% - 30px);
+    padding: 15px;
+    margin-top: 15px;
+    border: 2px solid #FFB6C1;
+    border-radius: 15px;
+    font-size: 1em;
+    resize: vertical;
+    max-height: 200px;
+    overflow-y: auto;
+}
+.action-btn {
+    background-color: #2ef7dc;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    margin-right: 10px;
+    margin-top: 10px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 1em;
+    font-weight: bold;
+}
+.action-btn:hover {
+    background-color: #FF1493;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+}
+#response {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #FFF0F5;
+    border-radius: 15px;
+    display: none;
+    font-size: 1.1em;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>ARTWISE</h1>
+    <p>こんにちは！美術に関する質問や悩みがあれば、ここで解決策を見つけましょう。
+    各カテゴリーから質問を選んだり、自由に質問を記入したりできます。</p>
+
+    <div class="button-container">
+        <button class="category-btn btn-1" onclick="showAdvice('idea')">アイデアを考える方法は？</button>
+        <button class="category-btn btn-2" onclick="showAdvice('evaluation')">作品の評価基準は？</button>
+        <button class="category-btn btn-3" onclick="showAdvice('score')">良い点数を取るコツは？</button>
+        <button class="category-btn btn-4" onclick="showAdvice('paint')">絵の具の使い方は？</button>
+        <button class="category-btn btn-5" onclick="showAdvice('materials')">必要な材料は？</button>
+        <button class="category-btn btn-6" onclick="showAdvice('color')">色の混ぜ方を教えて</button>
+        <button class="category-btn btn-7" onclick="showAdvice('history')">美術史を学ぶ意味は？</button>
+        <button class="category-btn btn-8" onclick="showAdvice('advice')">友達へのアドバイス方法</button>
+        <button class="category-btn btn-1" onclick="showFreeQuestion()">自由に質問する</button>
+    </div>
+
+    <div id="adviceArea" style="display:none;">
+        <h2 id="adviceTitle"></h2>
+        <p id="adviceText"></p>
+        <textarea id="questionInput" rows="3" placeholder="さらに詳しく質問したいことがあれば、ここに入力してください"></textarea>
+        <button class="action-btn" onclick="askMore()">さらに質問</button>
+        <button class="action-btn" onclick="resolve()">解決</button>
+        <button class="action-btn" onclick="goBack()">戻る</button>
+    </div>
+
+    <div id="response"></div>
+</div>
+
+<script>
+function shuffleButtons() {
+    const buttonContainer = document.querySelector('.button-container');
+    for (let i = buttonContainer.children.length; i >= 0; i--) {
+        buttonContainer.appendChild(buttonContainer.children[Math.random() * i | 0]);
+    }
+}
+
+window.onload = shuffleButtons;
+
+function showAdvice(category) {
+    const adviceArea = document.getElementById('adviceArea');
+    const adviceTitle = document.getElementById('adviceTitle');
+    const adviceText = document.getElementById('adviceText');
+
+    adviceArea.style.display = 'block';
+    
+    switch(category) {
+        case 'idea':
+            adviceTitle.textContent = 'アイデアを考える方法';
+            adviceText.textContent = 'アートのアイデアは、あなたの周りの世界や日常生活、感情、経験からインスピレーションを得ることができます。まずは自分が好きなものや興味のあるテーマを見つけ、それに基づいてアイデアを膨らませてみてください。スケッチブックに思い浮かんだことを自由に描いたり、写真を集めたりしてアイデアを視覚化することも有効です。また、他のアーティストの作品を見ることで、新しい視点が得られることもあります。';
+            break;
+        case 'evaluation':
+            adviceTitle.textContent = '作品の評価基準';
+            adviceText.textContent = '作品の評価は、技術的なスキルだけでなく、創造性、独自性、課題の要求をどれだけうまく満たしているかに基づいて行われます。例えば、構図の工夫や色彩の使い方、アイデアの表現力なども評価のポイントになります。評価基準は学校や授業によって異なりますが、作品に込められた努力や意図がきちんと伝わるかどうかも大切です。';
+            break;
+        case 'score':
+            adviceTitle.textContent = '良い点数を取るコツ';
+            adviceText.textContent = '良い点数を取るためには、課題の指示をしっかり理解し、その要求に応える作品を作ることが重要です。また、時間をかけて丁寧に作品を仕上げ、細部まで気を配ることもポイントです。自分のスタイルやアイデアを大胆に表現しつつ、基本的な技術を活かすことで、より高い評価を得ることができます。提出前に、教師の期待する基準や他の生徒の作品と比較してみるのも役立ちます。';
+            break;
+        case 'paint':
+            adviceTitle.textContent = '絵の具の使い方';
+            adviceText.textContent = '絵の具の使い方は種類によって異なります。水彩絵の具は、水を加えることで色の濃淡を自由に調整できますが、乾くと修正が難しいため計画的に使う必要があります。一方で、アクリル絵の具は速乾性があり重ね塗りが可能です。まずは少量の絵の具をパレットに取り、色を混ぜたり薄めたりして使い方を試してみましょう。筆の動かし方や塗り方も表現に影響しますので、いろいろな方法で試してみてください。';
+            break;
+        case 'materials':
+            adviceTitle.textContent = '必要な材料';
+            adviceText.textContent = '良い作品を作るためには、質の良い画材を選ぶことが重要です。例えば、紙の質によって絵の具の発色や仕上がりが大きく変わります。また、使用する絵の具や筆も作品の特性に合ったものを選ぶと良いです。水彩には水彩紙、アクリルにはキャンバス、または厚手の紙など、用途に応じて選びましょう。自分が使いやすい材料を見つけるために、いろいろなものを試してみることも大切です。';
+            break;
+        case 'color':
+            adviceTitle.textContent = '色の混ぜ方';
+            adviceText.textContent = '基本的には、三原色（赤、青、黄色）を混ぜることで多くの色を作ることができます。例えば、赤と青を混ぜると紫、青と黄色を混ぜると緑になります。また、色を薄めるには白を混ぜ、暗くするには黒を少量加えます。色の混ぜ方を試す際には、少量ずつ混ぜることで微妙な色合いを調整できます。色見本を作ることも、混色の感覚を養う良い方法です。';
+            break;
+        case 'history':
+            adviceTitle.textContent = '美術史を学ぶ意味';
+            adviceText.textContent = '美術の歴史を学ぶことで、時代ごとの文化や技術の進化、アーティストがどのようにして自分の作品に革新をもたらしたかを理解することができます。過去のアートに触れることで、現代の表現や技術に影響を与えた要素を知ることができ、あなた自身の作品にも新たな視点を取り入れることができるでしょう。また、他のアーティストの作品から学ぶことで、自分のスタイルやアイデアを発展させるヒントが得られます。';
+            break;
+        case 'advice':
+            adviceTitle.textContent = '友達へのアドバイス方法';
+            adviceText.textContent = '友達にアドバイスをする時は、まず相手の意見や考えをしっかり聞くことが大切です。そして、共感を示しつつ、自分の経験や視点を優しくシェアしましょう。強要せず、「もしよかったらこうしてみたらどうかな？」と提案する形にすると、相手も受け入れやすくなります。批判的にならないように気を付け、建設的で前向きなアドバイスを心掛けてください。';
+            break;
+    }
+}
+
+function showFreeQuestion() {
+    const adviceArea = document.getElementById('adviceArea');
+    const adviceTitle = document.getElementById('adviceTitle');
+    const adviceText = document.getElementById('adviceText');
+
+    adviceArea.style.display = 'block';
+    adviceTitle.textContent = '自由質問';
+    adviceText.textContent = 'どんな質問でも構いません。美術に関することを聞いてみましょう。';
+}
+
+function askMore() {
+    const response = document.getElementById('response');
+    response.style.display = 'block';
+    response.textContent = '先生に聞いてみよう！より詳しいアドバイスが聞けるかもしれません。';
+}
+
+function resolve() {
+    const response = document.getElementById('response');
+    response.style.display = 'block';
+    response.textContent = '応援しています！あなたならきっと素晴らしい作品が作れるはずです。';
+}
+
+function goBack() {
+    document.getElementById('adviceArea').style.display = 'none';
+    document.getElementById('response').style.display = 'none';
+}
+
+function submitQuestion() {
+    const questionInput = document.getElementById('questionInput');
+    const question = questionInput.value.trim();
+    const response = document.getElementById('response');
+
+    if (!question) {
+        alert('質問を入力してください。');
+        return;
+    }
+
+    response.style.display = 'block';
+
+    if (question.toLowerCase().includes('美術')) {
+        response.textContent = `そうですね、${question}というのは面白い質問です。[美術に関する詳細な回答]。その考えもいいと思うよ。応援するね！`;
+    } else {
+        response.textContent = '申し訳ありませんが、それについては詳しくないから、担当の先生に聞いてみてね。';
+    }
+}
+
+document.getElementById('questionInput').addEventListener('keyup', function(event) {
+    if (event.key === 'Enter') {
+        submitQuestion();
+    }
+});
+</script>
+</body>
+</html>
